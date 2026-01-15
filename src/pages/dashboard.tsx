@@ -1,10 +1,21 @@
+import { useEffect } from "react";
+
 import { CONFIG } from 'src/config-global';
 
 import { OverviewAnalyticsView as DashboardView } from 'src/sections/overview/view';
 
+import { api } from "../api/axios";
+
 // ----------------------------------------------------------------------
 
 export default function Page() {
+
+  useEffect(() => {
+    api.get("/api/perfumes")
+      .then(res => console.log("API OK:", res.data))
+      .catch(err => console.error("API ERRO:", err));
+  }, []);
+
   return (
     <>
       <title>{`Dashboard - ${CONFIG.appName}`}</title>

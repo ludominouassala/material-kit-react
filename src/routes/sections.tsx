@@ -1,14 +1,16 @@
 import type { RouteObject } from 'react-router';
 
 import { lazy, Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
 import { varAlpha } from 'minimal-shared/utils';
+import { Outlet , Navigate} from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
+
+import { AuthGuard } from 'src/auth/auth.guard';
 
 // ----------------------------------------------------------------------
 
@@ -42,14 +44,17 @@ const renderFallback = () => (
 export const routesSection: RouteObject[] = [
   {
     element: (
-      <DashboardLayout>
-        <Suspense fallback={renderFallback()}>
-          <Outlet />
-        </Suspense>
-      </DashboardLayout>
+      <AuthGuard>
+        <DashboardLayout>
+          <Suspense fallback={renderFallback()}>
+            <Outlet />
+          </Suspense>
+        </DashboardLayout>
+      </AuthGuard>
     ),
     children: [
-      { index: true, element: <DashboardPage /> },
+      { path: '/', element: <Navigate to="/sign-in" replace /> },
+      { path: 'dashboard', element: <DashboardPage /> },
       { path: 'user', element: <UserPage /> },
       { path: 'products', element: <ProductsPage /> },
       { path: 'blog', element: <BlogPage /> },

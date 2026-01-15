@@ -13,16 +13,29 @@ import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
 
+import { useAuth } from 'src/auth/auth.context';
+
 // ----------------------------------------------------------------------
 
 export function SignInView() {
+
+    const { signIn } = useAuth();
+
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignIn = useCallback(() => {
-    router.push('/');
-  }, [router]);
+  const handleSignIn = async () => {
+    try {
+      await signIn(email, senha);
+      router.push('/dashboard');
+    } catch (error) {
+      alert('Credenciais inválidas');
+    }
+  };
 
   const renderForm = (
     <Box
@@ -36,7 +49,8 @@ export function SignInView() {
         fullWidth
         name="email"
         label="Email address"
-        defaultValue="hello@gmail.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         sx={{ mb: 3 }}
         slotProps={{
           inputLabel: { shrink: true },
@@ -47,11 +61,12 @@ export function SignInView() {
         Forgot password?
       </Link>
 
-      <TextField
+          <TextField
         fullWidth
         name="password"
         label="Password"
-        defaultValue="@demo1234"
+        value={senha}
+        onChange={(e) => setSenha(e.target.value)}
         type={showPassword ? 'text' : 'password'}
         slotProps={{
           inputLabel: { shrink: true },
@@ -59,14 +74,16 @@ export function SignInView() {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                  <Iconify
+                    icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                  />
                 </IconButton>
               </InputAdornment>
             ),
           },
         }}
         sx={{ mb: 3 }}
-      />
+    />
 
       <Button
         fullWidth

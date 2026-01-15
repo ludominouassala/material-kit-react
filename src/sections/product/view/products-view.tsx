@@ -1,3 +1,5 @@
+import type { Product } from 'src/products/product.types';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -5,8 +7,8 @@ import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 
-import { _products } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useProducts } from 'src/products/product.hooks'; // novo hook que consome API
 
 import { ProductItem } from '../product-item';
 import { ProductSort } from '../product-sort';
@@ -49,7 +51,7 @@ const COLOR_OPTIONS = [
   '#FFC107',
 ];
 
-const defaultFilters = {
+const defaultFilters: FiltersProps = {
   price: '',
   gender: [GENDER_OPTIONS[0].value],
   colors: [COLOR_OPTIONS[4]],
@@ -57,40 +59,57 @@ const defaultFilters = {
   category: CATEGORY_OPTIONS[0].value,
 };
 
+// ----------------------------------------------------------------------
+
 export function ProductsView() {
+  const { products, loading } = useProducts(); // busca da API
+
+  const productsMapped = products.map((p: Product) => ({
+    id: p.id,
+    nome: p.nome,
+    marca: p.marca,
+    preco: p.preco,
+    status: p.disponibilidade ?? 'indisponível',
+    coverUrl: p.imagem ?? '/assets/images/default-product.png',
+    colors: [],
+    priceSale: null,
+}));
+
   const [sortBy, setSortBy] = useState('featured');
-
   const [openFilter, setOpenFilter] = useState(false);
-
   const [filters, setFilters] = useState<FiltersProps>(defaultFilters);
 
-  const handleOpenFilter = useCallback(() => {
-    setOpenFilter(true);
-  }, []);
-
-  const handleCloseFilter = useCallback(() => {
-    setOpenFilter(false);
-  }, []);
-
-  const handleSort = useCallback((newSort: string) => {
-    setSortBy(newSort);
-  }, []);
-
-  const handleSetFilters = useCallback((updateState: Partial<FiltersProps>) => {
-    setFilters((prevValue) => ({ ...prevValue, ...updateState }));
-  }, []);
+  const handleOpenFilter = useCallback(() => setOpenFilter(true), []);
+  const handleCloseFilter = useCallback(() => setOpenFilter(false), []);
+  const handleSort = useCallback((newSort: string) => setSortBy(newSort), []);
+  const handleSetFilters = useCallback(
+    (updateState: Partial<FiltersProps>) =>
+      setFilters((prev) => ({ ...prev, ...updateState })),
+    []
+  );
 
   const canReset = Object.keys(filters).some(
     (key) => filters[key as keyof FiltersProps] !== defaultFilters[key as keyof FiltersProps]
   );
 
+  // Mostra "Loading" enquanto busca produtos
+  if (loading) {
+    return (
+      <DashboardContent>
+        <Typography>Loading products...</Typography>
+      </DashboardContent>
+    );
+  }
+
   return (
     <DashboardContent>
-      <CartIcon totalItems={8} />
+      <CartIcon totalItems={products.length} />
 
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Products
+        Perfumes
       </Typography>
+
+      {/* Filtros e Ordenação */}
       <Box
         sx={{
           mb: 5,
@@ -100,14 +119,7 @@ export function ProductsView() {
           justifyContent: 'flex-end',
         }}
       >
-        <Box
-          sx={{
-            my: 1,
-            gap: 1,
-            flexShrink: 0,
-            display: 'flex',
-          }}
-        >
+        <Box sx={{ my: 1, gap: 1, flexShrink: 0, display: 'flex' }}>
           <ProductFilters
             canReset={canReset}
             filters={filters}
@@ -137,15 +149,20 @@ export function ProductsView() {
           />
         </Box>
       </Box>
-
+              
+      {/* Grid de Produtos */}
       <Grid container spacing={3}>
-        {_products.map((product) => (
-          <Grid key={product.id} size={{ xs: 12, sm: 6, md: 3 }}>
+        {productsMapped.map((product) => (
+          <Grid
+            key={product.id}
+            size={{ xs: 12, sm: 6, md: 3 }}
+          >
             <ProductItem product={product} />
           </Grid>
         ))}
       </Grid>
 
+      {/* Paginação (exemplo estático, depois podemos vincular à API) */}
       <Pagination count={10} color="primary" sx={{ mt: 8, mx: 'auto' }} />
     </DashboardContent>
   );

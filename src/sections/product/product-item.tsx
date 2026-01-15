@@ -13,36 +13,41 @@ import { ColorPreview } from 'src/components/color-utils';
 
 export type ProductItemProps = {
   id: string;
-  name: string;
-  price: number;
-  status: string;
-  coverUrl: string;
-  colors: string[];
-  priceSale: number | null;
+  nome: string;
+  marca: string;
+  preco: number;
+  precoSale?: number | null;
+  disponibilidade?: string;
+  status?: string;
+  imagem?: string | null;
+  cores?: string[];
 };
 
 export function ProductItem({ product }: { product: ProductItemProps }) {
-  const renderStatus = (
-    <Label
-      variant="inverted"
-      color={(product.status === 'sale' && 'error') || 'info'}
-      sx={{
-        zIndex: 9,
-        top: 16,
-        right: 16,
-        position: 'absolute',
-        textTransform: 'uppercase',
-      }}
-    >
-      {product.status}
-    </Label>
-  );
+  // Status (sale ou info)
+  const renderStatus =
+    product.status && (
+      <Label
+        variant="inverted"
+        color={product.status === 'sale' ? 'error' : 'info'}
+        sx={{
+          zIndex: 9,
+          top: 16,
+          right: 16,
+          position: 'absolute',
+          textTransform: 'uppercase',
+        }}
+      >
+        {product.status}
+      </Label>
+    );
 
+  // Imagem do produto, com fallback
   const renderImg = (
     <Box
       component="img"
-      alt={product.name}
-      src={product.coverUrl}
+      alt={product.nome}
+      src={product.imagem || '/assets/placeholder.png'} // fallback
       sx={{
         top: 0,
         width: 1,
@@ -53,33 +58,32 @@ export function ProductItem({ product }: { product: ProductItemProps }) {
     />
   );
 
+  // Preço
   const renderPrice = (
     <Typography variant="subtitle1">
-      <Typography
-        component="span"
-        variant="body1"
-        sx={{
-          color: 'text.disabled',
-          textDecoration: 'line-through',
-        }}
-      >
-        {product.priceSale && fCurrency(product.priceSale)}
-      </Typography>
-      &nbsp;
-      {fCurrency(product.price)}
+      {product.precoSale && (
+        <Typography
+          component="span"
+          variant="body1"
+          sx={{ color: 'text.disabled', textDecoration: 'line-through' }}
+        >
+          {fCurrency(product.precoSale)}
+        </Typography>
+      )}
+      &nbsp;{fCurrency(product.preco)}
     </Typography>
   );
 
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
-        {product.status && renderStatus}
+        {renderStatus}
         {renderImg}
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Link color="inherit" underline="hover" variant="subtitle2" noWrap>
-          {product.name}
+          {product.nome} - {product.marca}
         </Link>
 
         <Box
@@ -89,7 +93,7 @@ export function ProductItem({ product }: { product: ProductItemProps }) {
             justifyContent: 'space-between',
           }}
         >
-          <ColorPreview colors={product.colors} />
+          <ColorPreview colors={product.cores || []} />
           {renderPrice}
         </Box>
       </Stack>
