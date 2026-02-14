@@ -10,6 +10,8 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
+import { ProductEditView } from 'src/sections/product/view/product-edit-view';
+
 import { AuthGuard } from 'src/auth/auth.guard';
 
 // ----------------------------------------------------------------------
@@ -19,6 +21,7 @@ export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
+export const ProductDetailsPage = lazy(() => import('src/pages/product-details'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 const renderFallback = () => (
@@ -57,6 +60,8 @@ export const routesSection: RouteObject[] = [
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'user', element: <UserPage /> },
       { path: 'products', element: <ProductsPage /> },
+      { path: 'products/:id', element: <ProductDetailsPage /> },
+      { path: 'products/:id/edit', element: <ProductEditView />,},
       { path: 'blog', element: <BlogPage /> },
     ],
   },

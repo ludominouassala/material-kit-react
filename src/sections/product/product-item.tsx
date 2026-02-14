@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
@@ -8,6 +10,7 @@ import { fCurrency } from 'src/utils/format-number';
 
 import { Label } from 'src/components/label';
 import { ColorPreview } from 'src/components/color-utils';
+
 
 // ----------------------------------------------------------------------
 
@@ -24,6 +27,9 @@ export type ProductItemProps = {
 };
 
 export function ProductItem({ product }: { product: ProductItemProps }) {
+
+  const navigate = useNavigate();
+
   // Status (sale ou info)
   const renderStatus =
     product.status && (
@@ -75,7 +81,15 @@ export function ProductItem({ product }: { product: ProductItemProps }) {
   );
 
   return (
-    <Card>
+    <Card
+     onClick={() => navigate(`/products/${product.id}`)}
+      sx={{
+        cursor: 'pointer',
+        transition: '0.2s',
+        '&:hover': { boxShadow: 6 },
+      }}
+    
+    >
       <Box sx={{ pt: '100%', position: 'relative' }}>
         {renderStatus}
         {renderImg}

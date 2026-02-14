@@ -70,7 +70,7 @@ export function ProductsView() {
     marca: p.marca,
     preco: p.preco,
     status: p.disponibilidade ?? 'indisponível',
-    coverUrl: p.imagem ?? '/assets/images/default-product.png',
+    coverUrl: p.imagem ?? '/assets/images/default-product.webp',
     colors: [],
     priceSale: null,
 }));
