@@ -12,26 +12,36 @@ import { updateProduct, getProductById } from 'src/products/product.service';
 export function ProductEditView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
   const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
-    getProductById(id).then(setProduct);
+    getProductById(id)
+      .then(setProduct)
+      .finally(() => setLoading(false));
   }, [id]);
 
-  if (!product) {
-    return (
-      <DashboardContent>
-        <CircularProgress />
-      </DashboardContent>
-    );
-  }
+  if (loading) return (
+    <DashboardContent>
+      <CircularProgress />
+    </DashboardContent>
+  );
+
+  if (!product) return (
+    <DashboardContent>
+      <Typography>Produto não encontrado</Typography>
+    </DashboardContent>
+  );
 
   const handleUpdate = async (formData: FormData) => {
-    if (!id) return;
-    await updateProduct(id, formData);
-    navigate(`/products/${id}`);
+    try {
+      await updateProduct(id!, formData);
+      navigate(`/products/${id}`);
+    } catch (error) {
+      console.error('Erro ao atualizar produto:', error);
+      alert('Não foi possível salvar o produto.');
+    }
   };
 
   return (
@@ -40,10 +50,7 @@ export function ProductEditView() {
         Editar Produto
       </Typography>
 
-      <ProductForm
-        initialData={product}
-        onSubmit={handleUpdate}
-      />
+      <ProductForm initialData={product} onSubmit={handleUpdate} />
     </DashboardContent>
   );
 }
