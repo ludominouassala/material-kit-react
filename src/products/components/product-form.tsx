@@ -23,6 +23,9 @@ export function ProductForm({ initialData, onSubmit }: Props) {
   const [descricao, setDescricao] = useState(initialData?.descricao || '');
   const [preco, setPreco] = useState(initialData?.preco || 0);
   const [imagem, setImagem] = useState<File | null>(null);
+  const [disponibilidade, setDisponibilidade] = useState(
+  initialData?.disponibilidade || "em stock"
+);
 
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -58,6 +61,8 @@ export function ProductForm({ initialData, onSubmit }: Props) {
       formData.append('marca', marca);
       formData.append('descricao', descricao);
       formData.append('preco', String(preco));
+      formData.append('disponibilidade', disponibilidade);
+      
       if (imagem) formData.append('imagem', imagem);
 
       await onSubmit(formData);
@@ -91,6 +96,19 @@ export function ProductForm({ initialData, onSubmit }: Props) {
           onChange={e => setPreco(Number(e.target.value))}
           fullWidth
         />
+
+        <TextField
+          select
+          label="Disponibilidade"
+          value={disponibilidade}
+          onChange={(e) => setDisponibilidade(e.target.value)}
+          SelectProps={{ native: true }}
+          fullWidth
+        >
+        <option value="em stock">Em Stock</option>
+        <option value="esgotado">Esgotado</option>
+      </TextField>
+
 
         {/* Upload de imagem */}
         <Button variant="outlined" component="label">

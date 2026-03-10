@@ -49,20 +49,20 @@ export function ProductItem({ product }: { product: ProductItemProps }) {
     );
 
   // Imagem do produto, com fallback
-  const renderImg = (
-    <Box
-      component="img"
-      alt={product.nome}
-      src={product.imagem || '/assets/placeholder.png'} // fallback
-      sx={{
-        top: 0,
-        width: 1,
-        height: 1,
-        objectFit: 'cover',
-        position: 'absolute',
-      }}
-    />
-  );
+const renderImg = (
+  <Box
+    component="img"
+    alt={product.nome}
+    src={product.imagem || '/assets/placeholder.png'}
+    sx={{
+      top: 0,
+      width: 1,
+      height: 1,
+      objectFit: 'cover',
+      position: 'absolute',
+    }}
+  />
+);
 
   // Preço
   const renderPrice = (

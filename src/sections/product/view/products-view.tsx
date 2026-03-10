@@ -18,6 +18,7 @@ import { ProductFilters } from '../product-filters';
 import type { FiltersProps } from '../product-filters';
 
 // ----------------------------------------------------------------------
+const API_URL = "http://localhost:5000";
 
 const GENDER_OPTIONS = [
   { value: 'men', label: 'Men' },
@@ -64,15 +65,15 @@ const defaultFilters: FiltersProps = {
 export function ProductsView() {
   const { products, loading } = useProducts(); // busca da API
 
-  const productsMapped = products.map((p: Product) => ({
-    id: p.id,
-    nome: p.nome,
-    marca: p.marca,
-    preco: p.preco,
-    status: p.disponibilidade ?? 'indisponível',
-    coverUrl: p.imagem ?? '/assets/images/default-product.webp',
-    colors: [],
-    priceSale: null,
+const productsMapped = products.map((p: Product) => ({
+  id: p.id,
+  nome: p.nome,
+  marca: p.marca,
+  preco: p.preco,
+  status: p.disponibilidade ?? 'indisponível',
+  imagem: p.imagem ? `${API_URL}${p.imagem}` : '/assets/images/default-product.webp',
+  cores: [],
+  precoSale: null,
 }));
 
   const [sortBy, setSortBy] = useState('featured');
